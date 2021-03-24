@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react"
 import React, { Component } from 'react';
 import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle } from 'reactstrap';
-import dateFormat from 'dateformat';
 
 class DishDetail extends Component {
     constructor(props) {
@@ -13,8 +12,8 @@ class DishDetail extends Component {
             return (
                 <ul className="list-unstyled">
                     <li>{commentItem.comment}</li>
-                    <li>-- {commentItem.author} , {dateFormat(commentItem.date, "mmmm dS, yyyy")}</li>
-                </ul>
+                    <li>-- {commentItem.author} , {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(commentItem.date)))}</li>
+                </ul> 
             )
         });
         return (
@@ -38,6 +37,11 @@ class DishDetail extends Component {
     }
 
     render() {
+        if ((this.props.dish === null) || (this.props.dish === undefined)) {
+            return (
+                <div></div>
+            )
+        }
         return (
             <div className="container">
                 <div className="row">
