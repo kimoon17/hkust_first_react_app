@@ -33,8 +33,8 @@ class CommentForm extends Component {
   }
 
   handleSubmit(values) {
-    console.log("Current State is: " + JSON.stringify(values));
-    alert("Current State is: " + JSON.stringify(values));
+    this.toggleModal();
+    this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
   }
 
   toggleModal() {
@@ -72,14 +72,14 @@ class CommentForm extends Component {
                 </Col>
               </Row>
               <Row className="form-group">
-                <Label htmlFor="firstname" md={10}>
+                <Label htmlFor="author" md={10}>
                   Your Name
                 </Label>
                 <Col md={12}>
                   <Control.text
-                    model=".firstname"
-                    id="firstname"
-                    name="firstname"
+                    model=".author"
+                    id="author"
+                    name="author"
                     placeholder="Your Name"
                     className="form-control"
                     validators={{
@@ -101,14 +101,14 @@ class CommentForm extends Component {
                 </Col>
               </Row>
               <Row className="form-group">
-                <Label htmlFor="message" md={10}>
+                <Label htmlFor="comment" md={10}>
                   Comment
                 </Label>
                 <Col md={12}>
                   <Control.textarea
-                    model=".message"
-                    id="message"
-                    name="message"
+                    model=".comment"
+                    id="comment"
+                    name="comment"
                     rows="6"
                     className="form-control"
                   ></Control.textarea>
@@ -129,9 +129,10 @@ class CommentForm extends Component {
   }
 }
 
-function RenderComments({ commentItems }) {
+function RenderComments({ commentItems, dishId, addComment }) {
   const comments = commentItems.map((commentItem) => {
     return (
+        <>
       <ul className="list-unstyled">
         <li>{commentItem.comment}</li>
         <li>
@@ -143,13 +144,20 @@ function RenderComments({ commentItems }) {
           }).format(new Date(Date.parse(commentItem.date)))}
         </li>
       </ul>
+        </>
     );
   });
   return (
+      <>
     <div>
       <h4>Comments</h4>
       {comments}
     </div>
+        <div>
+        <CommentForm dishId={dishId} addComment={addComment} />
+
+      </div>
+      </>
   );
 }
 
@@ -165,7 +173,7 @@ function RenderDish({ dish }) {
   );
 }
 
-const DishDetail = (props) => {
+const DishDetail = (props, {addComment, dishId}) => {
   if (props.dish === null || props.dish === undefined) {
     return <div></div>;
   }
@@ -190,8 +198,9 @@ const DishDetail = (props) => {
           <RenderDish dish={props.dish} />
         </div>
         <div className="col-12 col-md-5 m-1">
-          <RenderComments commentItems={props.comments} />
-          <CommentForm />
+          <RenderComments commentItems={props.comments}
+          addComment={props.addComment}
+          dishId={props.dish.id}/>
         </div>
       </div>
     </div>
